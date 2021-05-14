@@ -1,0 +1,61 @@
+<%- include("header") -%>
+
+<!-- ToDOList button -->
+<form action="/todolist" method="get">
+    <input type="button" name="button" value="ToDOList" onclick="this.form.submit()">
+</form>
+
+<!-- reminder button -->
+<form action="/reminder" method="get">
+    <input class="reminder" type="button" name="button" value="Reminder" onclick="this.form.submit()">
+</form>
+
+<!-- currentDate button -->
+<form action="/" method="get">
+    <input class="homeform" type="button" name="button" value="Current Date" onclick="this.form.submit()">
+</form>
+
+<!-- heading -->
+<div class="box" id="heading">
+    <h1> <%= listTitle %> </h1>
+    (<%=  newItem  %>/<%=  newListItems.length- newItem  %>)
+</div>
+
+<div class="box">
+
+    <% newListItems.forEach(function(item){ %>
+
+    <form action="/done" method="post">
+        <div class="item">
+
+            <!-- if done then check it ; if not done then onchange submit the form -->
+            <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %>>
+
+            <input type="hidden" name="listName" value="<%= listTitle %>"></input>
+            <a href="<%=  item.name  %>" target="_blank">
+                <p><%=  item.name  %></p>
+            </a>
+            <p>(<%=  item.timesSeen  %>)</p>
+        </div>
+    </form>
+
+    <!-- delete button and delete request form -->
+    <form action="/delete" method="post">
+        <input type="button" name="button" value="Delete" onclick="this.form.submit()">
+        <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
+        <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
+        <input type="hidden" name="listName" value="<%= listTitle %>"></input>
+    </form>
+
+    <br>
+    <% });%>
+
+    <!-- add new item form -->
+    <form action="/" method="post">
+        <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <%-(listTitle!="todolist" && listTitle!="reminder") ? '<input type="checkbox" name="yes" value="1"> <p>Revision ?</p> ' : '' %>
+        <button type="submit" name="listName" value="<%= listTitle %>">+</button>
+    </form>
+</div>
+
+<%- include("footer") -%>
