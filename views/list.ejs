@@ -1,5 +1,4 @@
 <%- include("header") -%>
-
 <!-- ToDOList button -->
 <form action="/todolist" method="get">
     <input type="button" name="button" value="ToDOList" onclick="this.form.submit()">
@@ -18,7 +17,7 @@
 <!-- heading -->
 <div class="box" id="heading">
     <h1> <%= listTitle %> </h1>
-    (<%=  newItem  %>/<%=  newListItems.length- newItem  %>)
+    (<%=  newItem  %>+<%=  newListItems.length- newItem  %>)
 </div>
 
 <div class="box">
