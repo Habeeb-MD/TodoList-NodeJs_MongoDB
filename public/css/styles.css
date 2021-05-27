@@ -43,9 +43,9 @@ h1 {
   border-bottom: 0;
 }
 
-input:checked+p {
+input:checked+a>p {
   text-decoration: line-through;
-  text-decoration-color: #A683E3;
+  text-decoration-color: #4286f4;
 }
 
 input[type="checkbox"] {

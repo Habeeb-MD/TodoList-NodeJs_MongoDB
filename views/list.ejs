@@ -33,11 +33,11 @@
 
       <!-- if done then check it ; if not done then onchange submit the form -->
       <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %>>
-
-      <input type="hidden" name="listName" value="<%= listTitle %>"></input>
       <a href="<%=  item.name  %>" target="_blank">
         <p><%=  item.name  %>. (<%=  item.timesSeen  %>)</p>
       </a>
+
+      <input type="hidden" name="listName" value="<%= listTitle %>"></input>
       <!-- <p>(<%=  item.timesSeen  %>)</p> -->
     </div>
   </form>
