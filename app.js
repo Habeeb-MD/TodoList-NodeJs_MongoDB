@@ -38,7 +38,7 @@
   const List = new mongoose.model("List", listSchema);
 
 
-  //handling the gt request for root
+  //handling the get request for root
   app.get("/", function(req, res) {
 
     //find the current date

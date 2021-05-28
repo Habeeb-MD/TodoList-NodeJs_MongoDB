@@ -34,8 +34,20 @@
 
       <!-- if done then check it ; if not done then onchange submit the form -->
       <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %>>
+
+      <!-- display short name-->
+      <%
+      var shortName=item.name;
+      var pos = shortName.lastIndexOf("/");
+      if (pos+3 >= shortName.length) {
+        shortName=shortName.slice(0,pos);
+        pos = shortName.lastIndexOf("/");
+      }
+      shortName = shortName.substr(pos+1);
+      %>
+
       <a href="<%=  item.name  %>" target="_blank">
-        <p><%=  item.name  %>. (<%=  item.timesSeen  %>)</p>
+        <p><%=  shortName  %>. (<%=  item.timesSeen  %>)</p>
       </a>
 
       <input type="hidden" name="listName" value="<%= listTitle %>"></input>
