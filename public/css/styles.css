@@ -1,12 +1,14 @@
 html {
-  min-height: 1000px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   font-family: 'helvetica neue';
-  background: #c31432;
-  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #240b36, #c31432);
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #240b36, #c31432);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-image: url("pexels-ann-h-1762851.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  width: 100%;
 }
 
 h1 {
@@ -24,12 +26,11 @@ h1 {
 
 #heading {
   background: #373B44;
-  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #4286f4, #373B44);
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #4286f4, #373B44);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  opacity: 0.6;
   text-align: center;
+}
+#heading >p{
+  color: black;
 }
 
 .item {
@@ -58,7 +59,7 @@ p {
   padding: 10px;
   font-size: 20px;
   font-weight: 200;
-  color: #ffccff;
+  color: #151515;
 }
 
 form {
@@ -87,10 +88,10 @@ input[type="button"] {
   float: right;
   text-align: center;
   height: 25px;
-  border-radius: 20%;
+  border-radius: 30%;
   font-size: 18px;
   font-weight: 200;
-  opacity: 0.6;
+  opacity: 0.5;
   font-family: serif;
   position: absolute;
   right: 220px;
@@ -112,7 +113,7 @@ input[type="text"] {
   background: transparent;
   font-size: 20px;
   font-weight: 200;
-  color: #ffccff;
+  color: #40394a;
   width: 313px;
 }
 
@@ -122,6 +123,5 @@ input[type="text"]:focus {
 }
 
 footer {
-  color: #99ff99;
   text-align: center;
 }
