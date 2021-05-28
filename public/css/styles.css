@@ -6,9 +6,8 @@ html {
   background-image: url("pexels-ann-h-1762851.jpg");
   background-repeat: no-repeat;
   background-size: cover;
+  background-attachment: fixed;
   background-position: center;
-  height: 100%;
-  width: 100%;
 }
 
 h1 {
