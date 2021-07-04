@@ -28,7 +28,8 @@ h1 {
   opacity: 0.6;
   text-align: center;
 }
-#heading >p{
+
+#heading>p {
   color: black;
 }
 
@@ -97,11 +98,15 @@ input[type="button"] {
 }
 
 .homeform {
-  left: 12%;
+  left: 15%;
+}
+
+.nextDay {
+  left: 30%;
 }
 
 .reminder {
-  left: 45%;
+  left: 65%;
 }
 
 input[type="text"] {

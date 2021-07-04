@@ -3,9 +3,16 @@
 <!-- clock -->
 <iframe src="https://free.timeanddate.com/clock/i7tgqiub/n166/fn6/fs12/fc888/tct/pct/pa8/tt0/tw1/th1/ta1/tb4" frameborder="0" width="173" height="45" allowtransparency="true"></iframe>
 
-<!-- ToDOList button -->
-<form action="/todolist" method="get">
-  <input type="button" name="button" value="ToDOList" onclick="this.form.submit()">
+
+<!-- currentDate button -->
+<form action="/" method="get">
+  <input class="homeform" type="button" name="button" value="Current Date" onclick="this.form.submit()">
+</form>
+
+<!-- nextDay button -->
+
+<form action="<%= "nextDay"+listTitle %>" method="get">
+  <input class="nextDay" type="button" name="button" value="NextDay" onclick="this.form.submit()">
 </form>
 
 <!-- reminder button -->
@@ -13,10 +20,11 @@
   <input class="reminder" type="button" name="button" value="Reminder" onclick="this.form.submit()">
 </form>
 
-<!-- currentDate button -->
-<form action="/" method="get">
-  <input class="homeform" type="button" name="button" value="Current Date" onclick="this.form.submit()">
+<!-- ToDOList button -->
+<form action="/todolist" method="get">
+  <input type="button" name="button" value="ToDOList" onclick="this.form.submit()">
 </form>
+
 
 <!-- heading -->
 <div class="box" id="heading">

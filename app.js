@@ -166,7 +166,19 @@
   //handling the get request for a  custom List
   app.get("/:customListName", function(req, res) {
 
-    const customListName = req.params.customListName;
+    var customListName = req.params.customListName;
+
+    if (customListName.substr(0, 7) == 'nextDay') {
+      customListName = customListName.substr(7);
+      var c = customListName[0];
+      if (c >= '0' && c <= '9') {
+        customListName = customListName.split("-").reverse().join("-");
+        var date = new Date(customListName);
+        date.setDate(date.getDate() + 1);
+        var month = date.getMonth() + 1;
+        customListName = date.getDate() + "-" + month + "-" + date.getFullYear();
+      }
+    }
 
     _.capitalize(customListName);
 
