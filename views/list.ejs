@@ -1,48 +1,73 @@
+<%
+function getDate(customListName){
+    customListName = customListName.split("-")
+    if(customListName[0]<10)customListName[0]='0'+customListName[0];
+    if(customListName[1]<10)customListName[1]='0'+customListName[1];
+    customListName=customListName.reverse().join("-");
+    return customListName
+}
+%>
+
+
 <%- include("header") -%>
 
 <!-- clock -->
-<iframe src="https://free.timeanddate.com/clock/i7tgqiub/n166/fn6/fs12/fc888/tct/pct/pa8/tt0/tw1/th1/ta1/tb4" frameborder="0" width="173" height="45" allowtransparency="true"></iframe>
+<iframe src="https://free.timeanddate.com/clock/i87gw796/n539/fn5/fs12/fc009/tct/pct/pa8/tt0/tw1/th1/ta1/tb4" frameborder="0" width="168" height="44" allowtransparency="true"></iframe>
 
 
-<!-- currentDate button -->
-<form action="/" method="get">
-  <input class="homeform" type="button" name="button" value="Current Date" onclick="this.form.submit()">
-</form>
 
-<!-- nextDay button -->
 
-<form action="<%= "nextDay"+listTitle %>" method="get">
-  <input class="nextDay" type="button" name="button" value="NextDay" onclick="this.form.submit()">
-</form>
+<div class="btn-group btn-group-sm left_align" role="group" aria-label="Basic mixed styles example">
+  <!-- prevDate button -->
+  <form action="<%= "prevDate"+listTitle %>" method="get">
+    <button type="button" class="btn btn-danger" onclick="this.form.submit()">Previous Date</button>
+  </form>
 
-<!-- reminder button -->
-<form action="/reminder" method="get">
-  <input class="reminder" type="button" name="button" value="Reminder" onclick="this.form.submit()">
-</form>
+  <!-- currentDate button -->
+  <form action="/" method="get">
+    <button type="button" class="btn btn-warning" onclick="this.form.submit()">Current Date</button>
+  </form>
 
-<!-- ToDOList button -->
-<form action="/todolist" method="get">
-  <input type="button" name="button" value="ToDOList" onclick="this.form.submit()">
-</form>
+  <!-- nextDay button -->
+  <form action="<%= "nextDate"+listTitle %>" method="get">
+      <button type="button" class="btn btn-success" onclick="this.form.submit()">Next Date</button>
+  </form>
+</div>  
+
+
+<div class="btn-group btn-group-sm right_align" role="group" aria-label="Basic mixed styles example">
+
+  <form action="/" method="get">
+    <input type="date" class="btn btn-danger" id="date" name="selected_date" value=<%= getDate(listTitle) %> min="2021-05-13">
+    <button type="button" class="btn btn-danger" onclick="this.form.submit()" >Go to Date</label>
+  </form>
+  
+  <!-- reminder button  -->
+  <form action="/reminder" method="get">
+    <button type="button" class="btn btn-warning" onclick="this.form.submit()">Reminder</button>
+  </form>
+
+  <!-- ToDOList button -->
+  <form action="/todolist" method="get">
+    <button type="button" class="btn btn-success" onclick="this.form.submit()">ToDOList</button>
+  </form>
+</div>  
 
 
 <!-- heading -->
 <div class="box" id="heading">
   <h1> <%= listTitle %> </h1>
   <p>(<%=  newItem  %>+<%=  newListItems.length- newItem  %>)</p>
-
 </div>
 
 <div class="box">
-
   <% newListItems.forEach(function(item){ %>
-
   <form action="/done" method="post">
     <div class="item">
 
       <!-- if done then check it ; if not done then onchange submit the form -->
-      <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %>>
-
+      <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %> id="done">
+      <label class="form-check-label btn btn-success" for="done">Done</label>
       <!-- display short name-->
       <%
       var shortName=item.name;
@@ -65,7 +90,7 @@
 
   <!-- delete button and delete request form -->
   <form action="/delete" method="post">
-    <input type="button" name="button" value="Delete" onclick="this.form.submit()">
+    <input type="button" class="btn btn-danger" name="button" value="Delete" onclick="this.form.submit()">
     <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
     <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
     <input type="hidden" name="listName" value="<%= listTitle %>"></input>
@@ -74,12 +99,15 @@
   <br>
   <% });%>
 
+
+  
   <!-- add new item form -->
   <form action="/" method="post">
-    <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
-    <%-(listTitle!="todolist" && listTitle!="reminder") ? '<input type="checkbox" name="yes" value="1"> <p>Revision ?</p> ' : '' %>
-    <button type="submit" name="listName" value="<%= listTitle %>">+</button>
+    <input type="text" name="newItem" class="form-control" placeholder="Add New Item" autocomplete="off">
+    <%-(listTitle!="todolist" && listTitle!="reminder") ? '<input type="checkbox" name="revision" value="1" id="flexCheckDefault"><label class="form-check-label btn btn-warning" for="flexCheckDefault">Revision ?</label>' : '' %>
+    <button type="submit" class="btn btn-success" name="listName" value="<%= listTitle %>">Add to List </button>
   </form>
+
 </div>
 
 <%- include("footer") -%>
