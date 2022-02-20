@@ -62,13 +62,15 @@ function getDate(customListName){
 
 <div class="box">
   <% newListItems.forEach(function(item){ %>
-  <form action="/done" method="post">
-    <div class="item">
 
+<!-- done button -->
+    <form action="/done" method="post">
+    <div class="item">
       <!-- if done then check it ; if not done then onchange submit the form -->
-      <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %> id="done">
-      <label class="form-check-label btn btn-success" for="done">Done</label>
-      <!-- display short name-->
+      <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %> id="<%=item._id%>">
+      <label class="form-check-label btn btn-success" for="<%=item._id%>">Done</label>
+
+<!-- display short name-->
       <%
       var shortName=item.name;
       var pos = shortName.lastIndexOf("/");
