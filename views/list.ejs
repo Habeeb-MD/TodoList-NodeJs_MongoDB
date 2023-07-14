@@ -12,7 +12,7 @@ function getDate(customListName){
 <%- include("header") -%>
 
 <!-- clock -->
-<iframe src="https://free.timeanddate.com/clock/i87gw796/n539/fn5/fs12/fc009/tct/pct/pa8/tt0/tw1/th1/ta1/tb4" frameborder="0" width="168" height="44" allowtransparency="true"></iframe>
+<iframe src="https://free.timeanddate.com/clock/i87gw796/n539/fn5/fs12/fc009/tct/pct/pa8/tt0/tw1/th1/ta1/tb4" frameborder="0" width="120" height="44" allowtransparency="true"></iframe>
 
 
 
@@ -32,8 +32,14 @@ function getDate(customListName){
   <form action="<%= "nextDate"+listTitle %>" method="get">
       <button type="button" class="btn btn-success" onclick="this.form.submit()">Next Date</button>
   </form>
-</div>  
 
+  <!-- getNotDoneForm -->
+  <form id="getNotDoneForm" method="GET">
+    <input type="number" class="col-md-2" id="notDoneInput" name="notDoneInput" min="1" max="200" required>
+    <button type="button" class="btn btn-success" onclick="this.form.submit()">Get Not Done</button>
+  </form>  
+  
+</div>  
 
 <div class="btn-group btn-group-sm right_align" role="group" aria-label="Basic mixed styles example">
 
@@ -61,7 +67,7 @@ function getDate(customListName){
 </div>
 
 <div class="box">
-  <% newListItems.forEach(function(item){ %>
+  <% newListItems.forEach(function(item, index){ %>
 
 <!-- done button -->
     <form action="/done" method="post">
@@ -85,7 +91,7 @@ function getDate(customListName){
         <p><%=  shortName  %>. (<%=  item.timesSeen  %>)</p>
       </a>
 
-      <input type="hidden" name="listName" value="<%= listTitle %>"></input>
+      <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
       <!-- <p>(<%=  item.timesSeen  %>)</p> -->
     </div>
   </form>
@@ -95,7 +101,7 @@ function getDate(customListName){
     <input type="button" class="btn btn-danger" name="button" value="Delete" onclick="this.form.submit()">
     <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
     <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
-    <input type="hidden" name="listName" value="<%= listTitle %>"></input>
+    <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
   </form>
 
   <br>
