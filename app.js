@@ -66,18 +66,28 @@ app.get("/", function (req, res) {
 
 // handling the post request
 app.post("/", function (req, res) {
-  const itemName = req.body.newItem;
+  let itemName = req.body.newItem;
   const listName = req.body.listName;
   const revisionNeeded = req.body.revision;
   //console.log(revisionNeeded)
+
+  if (itemName.startsWith('https://leetcode.com/problems/')) {
+    const startIndex = itemName.indexOf('/problems/') + 10;
+    let endIndex = itemName.indexOf('/', startIndex);
+    if (endIndex < 0) {
+      endIndex = itemName.length;
+    }
+    itemName = itemName.substring(0, endIndex);
+    // console.log(endIndex,itemName);
+  }
+
   //make a new item
-  if (''.startsWith('https://leetcode.com/problems/'))
-    var item = new Item({
-      done: false,
-      name: itemName,
-      timesSeen: 1,
-      gap: (revisionNeeded ? 4 : 0)
-    });
+  var item = new Item({
+    done: false,
+    name: itemName,
+    timesSeen: 1,
+    gap: (revisionNeeded ? 4 : 0)
+  });
 
   const date = new Date();
   var month = date.getMonth() + 1;
