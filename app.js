@@ -14,11 +14,17 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static("public"));
 
-connection = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-j09cl.mongodb.net/todolistDB`;
+connection = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.j09cl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 mongoose.connect(connection, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-});
+}).then(() => {
+  console.log("Connected to MongoDB");
+})
+  .catch(() => {
+    console.log("Couldn't connect to MongoDB");
+  });
+
 
 const itemsSchema = new mongoose.Schema({
   name: String,
