@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static("public"));
 
-connection = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.j09cl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+connection = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-j09cl.mongodb.net/todolistDB`;
 mongoose.connect(connection, {
   useNewUrlParser: true,
   useUnifiedTopology: true
