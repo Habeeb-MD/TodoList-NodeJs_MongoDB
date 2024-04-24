@@ -1,0 +1,224 @@
+const { getPreviousDayItem } = require("./utils");
+const { Item, List } = require("./mongo");
+const _ = require("lodash");
+
+const getTodaysList = (req, res) => {
+  //find the current date
+  const date = new Date();
+  var month = date.getMonth() + 1;
+
+  const currentDate = date.getDate() + "-" + month + "-" + date.getFullYear();
+  let query = req.originalUrl;
+  if (query.includes("selected_date")) {
+    let selected_date = query.substring("/?selected_date=".length);
+    selected_date = selected_date.split("-");
+    if (selected_date[1] < 10) selected_date[1] = selected_date[1][1];
+    if (selected_date[2] < 10) selected_date[2] = selected_date[2][1];
+    selected_date = selected_date.reverse().join("-");
+    //redirect it to selected_date
+    res.redirect("/" + selected_date);
+  } else {
+    //redirect it to current date list
+    res.redirect("/" + currentDate);
+  }
+};
+
+const addNewItem = (req, res) => {
+  let itemName = req.body.newItem;
+  const listName = req.body.listName;
+  const revisionNeeded = req.body.revision;
+  //console.log(revisionNeeded)
+
+  if (itemName.startsWith("https://leetcode.com/problems/")) {
+    const startIndex = itemName.indexOf("/problems/") + 10;
+    let endIndex = itemName.indexOf("/", startIndex);
+    if (endIndex < 0) {
+      endIndex = itemName.length;
+    }
+    itemName = itemName.substring(0, endIndex);
+    // console.log(endIndex,itemName);
+  }
+
+  //make a new item
+  var item = new Item({
+    done: false,
+    name: itemName,
+    timesSeen: 1,
+    gap: revisionNeeded ? 4 : 0,
+  });
+
+  const date = new Date();
+  var month = date.getMonth() + 1;
+  const currentDate = date.getDate() + "-" + month + "-" + date.getFullYear();
+
+  //add a new item to the list
+  List.findOne(
+    {
+      name: listName,
+    },
+    function (err, foundList) {
+      foundList.items.push(item);
+      foundList.newItem = foundList.newItem + 1;
+      foundList.save();
+      res.redirect("/" + listName);
+    }
+  );
+};
+
+const markItemAsDone = (req, res) => {
+  const checkedItemId = req.body.checkbox;
+  const listName = req.body.listName;
+  List.findOne(
+    {
+      name: listName,
+    },
+    function (err, curList) {
+      if (!err) {
+        var element = curList.items.find(function (element) {
+          return element.id == checkedItemId;
+        });
+        element.done = true;
+        curList.save();
+        res.redirect("/" + listName);
+
+        //also add it to the revision list in list collection and insert there
+        if (element.gap) {
+          const date = new Date();
+          date.setDate(date.getDate() + element.gap);
+          var month = date.getMonth() + 1;
+          const revDate =
+            date.getDate() + "-" + month + "-" + date.getFullYear();
+          var item = new Item({
+            done: false,
+            name: element.name,
+            timesSeen: element.timesSeen + 1,
+            gap: Math.min(25, element.gap * 2),
+          });
+
+          List.findOne(
+            {
+              name: revDate,
+            },
+            function (err, revList) {
+              if (!revList) {
+                //create a new list
+                const list = new List({
+                  name: revDate,
+                  newItem: 0,
+                  items: [item],
+                });
+                list.save();
+              } else {
+                revList.items.push(item);
+                revList.save();
+              }
+            }
+          );
+        }
+      }
+    }
+  );
+};
+
+const deleteItem = (req, res) => {
+  const checkedItemId = req.body.checkbox;
+  const listName = req.body.listName;
+  const timesSeen = req.body.timesSeen;
+
+  //pull is used to delete element from array in mongodb
+  List.findOneAndUpdate(
+    {
+      name: listName,
+    },
+    {
+      $pull: {
+        items: {
+          _id: checkedItemId,
+        },
+      },
+    },
+    function (err, foundList) {
+      if (!err) {
+        if (timesSeen == 1) {
+          foundList.newItem = foundList.newItem - 1;
+          foundList.save();
+        }
+        res.redirect("/" + listName);
+      }
+    }
+  );
+};
+
+const getCustomList = async (req, res) => {
+  var customListName = req.params.customListName;
+  if (
+    customListName.includes("prevDate") ||
+    customListName.includes("nextDate")
+  ) {
+    let x = customListName[0] == "p" ? -1 : 1;
+    customListName = customListName.substring(8);
+    customListName = customListName.split("-").reverse().join("-");
+    var date = new Date(customListName);
+    if (date instanceof Date && !isNaN(date)) {
+      date.setDate(date.getDate() + x);
+    } else {
+      date = new Date();
+    }
+    var month = date.getMonth() + 1;
+    customListName = date.getDate() + "-" + month + "-" + date.getFullYear();
+  } else if ("notDoneInput" in req.query) {
+    //iterate last N days and from the list of that day , retrieve unfinished item and add it newList
+    let numOfDays = req.query["notDoneInput"];
+    numOfDays = +numOfDays;
+    let newListItems = [];
+    let itemsListTitle = [];
+    await getPreviousDayItem(newListItems, itemsListTitle, numOfDays);
+
+    let listTitle = "Previous-" + numOfDays;
+    //render the new list
+    res.render("list", {
+      listTitle: listTitle,
+      newListItems: newListItems,
+      itemsListTitle: itemsListTitle,
+      newItem: 0,
+    });
+    return;
+  }
+
+  _.capitalize(customListName);
+
+  List.findOne(
+    {
+      name: customListName,
+    },
+    function (err, foundList) {
+      if (!err) {
+        if (!foundList) {
+          //create a new list
+          const list = new List({
+            name: customListName,
+            newItem: 0,
+            items: [],
+          });
+          list.save();
+          res.redirect("/" + customListName);
+        } else {
+          //render the existing list
+          res.render("list", {
+            listTitle: foundList.name,
+            newListItems: foundList.items,
+            newItem: foundList.newItem,
+          });
+        }
+      }
+    }
+  );
+};
+
+module.exports = {
+  getTodaysList,
+  addNewItem,
+  markItemAsDone,
+  deleteItem,
+  getCustomList,
+};
