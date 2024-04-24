@@ -46,8 +46,7 @@ const listSchema = new mongoose.Schema({
 
 const List = new mongoose.model("List", listSchema);
 
-//handling the get request for root
-app.get("/", function (req, res) {
+const getTodaysList = (req, res) => {
   //find the current date
   const date = new Date();
   var month = date.getMonth() + 1;
@@ -66,10 +65,9 @@ app.get("/", function (req, res) {
     //redirect it to current date list
     res.redirect("/" + currentDate);
   }
-});
+};
 
-// handling the post request
-app.post("/", function (req, res) {
+const addNewItem = (req, res) => {
   let itemName = req.body.newItem;
   const listName = req.body.listName;
   const revisionNeeded = req.body.revision;
@@ -109,10 +107,9 @@ app.post("/", function (req, res) {
       res.redirect("/" + listName);
     }
   );
-});
+};
 
-// if done change done variable to true and add it to revision list
-app.post("/done", function (req, res) {
+const markItemAsDone = (req, res) => {
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
   List.findOne(
@@ -165,10 +162,9 @@ app.post("/done", function (req, res) {
       }
     }
   );
-});
+};
 
-//handling the delete request
-app.post("/delete", function (req, res) {
+const deleteItem = (req, res) => {
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
   const timesSeen = req.body.timesSeen;
@@ -195,7 +191,7 @@ app.post("/delete", function (req, res) {
       }
     }
   );
-});
+};
 
 const getDateStringFromDateObject = (date) => {
   return (
@@ -249,8 +245,7 @@ const getPreviousDayItem = async (
   }
 };
 
-//handling the get request for a  custom List
-app.get("/:customListName", async function (req, res) {
+const getCustomList = async (req, res) => {
   var customListName = req.params.customListName;
   if (
     customListName.includes("prevDate") ||
@@ -314,7 +309,22 @@ app.get("/:customListName", async function (req, res) {
       }
     }
   );
-});
+};
+
+//handling the get request for root
+app.get("/", getTodaysList);
+
+// handling the post request
+app.post("/", addNewItem);
+
+// if done change done variable to true and add it to revision list
+app.post("/done", markItemAsDone);
+
+//handling the delete request
+app.post("/delete", deleteItem);
+
+//handling the get request for a custom List
+app.get("/:customListName", getCustomList);
 
 let port = process.env.PORT;
 if (port == null || port == "") {
@@ -322,5 +332,5 @@ if (port == null || port == "") {
 }
 
 app.listen(port, function () {
-  console.log("Server has started succesfully ");
+  console.log(`Server has started succesfully on port ${port}...`);
 });
