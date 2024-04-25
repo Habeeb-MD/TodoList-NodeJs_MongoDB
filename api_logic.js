@@ -2,6 +2,7 @@ const {
   increaseDate,
   getPreviousDayItem,
   getDateStringFromDateObject,
+  convert_DDMMYYYY_StringTo_YYYYMMDD
 } = require("./utils");
 const { Item, List } = require("./mongo");
 const _ = require("lodash");
@@ -167,7 +168,7 @@ const getCustomList = async (req, res) => {
   ) {
     let x = customListName[0] == "p" ? -1 : 1;
     customListName = customListName.substring(8);
-    customListName = customListName.split("-").reverse().join("-");
+    customListName = convert_DDMMYYYY_StringTo_YYYYMMDD(customListName);
     var date = new Date(customListName);
     if (date instanceof Date && !isNaN(date)) {
       date.setDate(date.getDate() + x);

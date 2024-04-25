@@ -28,6 +28,9 @@ const isSameDate = (date1, date2) =>
 
 const findOneAsync = util.promisify(List.findOne).bind(List);
 
+const convert_DDMMYYYY_StringTo_YYYYMMDD = (inputDateStr) =>
+  inputDateStr.split("-").reverse().join("-");
+
 const getPreviousDayItem = async (
   newListItems,
   itemsListTitle,
@@ -44,6 +47,12 @@ const getPreviousDayItem = async (
   }
   const records = await List.find().where("name").in(dateList).exec();
   // console.log("records", records);
+  records.sort(
+    (a, b) =>
+      new Date(convert_DDMMYYYY_StringTo_YYYYMMDD(b.name)) -
+      new Date(convert_DDMMYYYY_StringTo_YYYYMMDD(a.name))
+  );
+  // console.log("sorted records", records);
   for (let i = 0; i < records.length; i++) {
     const foundList = records[i];
     // go over each item and add them to our new list if not done
@@ -64,4 +73,5 @@ module.exports = {
   isSameDate,
   findOneAsync,
   getPreviousDayItem,
+  convert_DDMMYYYY_StringTo_YYYYMMDD,
 };
