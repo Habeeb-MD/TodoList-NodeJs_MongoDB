@@ -7,12 +7,17 @@ const getDateStringFromDateObject = (date) => {
   );
 };
 const increaseDate = (date, numOfDays) => {
+  console.log("inside increaseDate");
+  numOfDays = Number(numOfDays);
+  console.log("params :- ", date, numOfDays);
   let newDate = new Date(date);
   newDate.setDate(newDate.getDate() + numOfDays);
+  console.log("newDate :- ", newDate);
   return newDate;
 };
 const decreaseDate = (date, numOfDays) => {
   let newDate = new Date(date);
+  numOfDays = Number(numOfDays);
   newDate.setDate(newDate.getDate() - numOfDays);
   return newDate;
 };
@@ -59,5 +64,5 @@ module.exports = {
   decreaseDate,
   isSameDate,
   findOneAsync,
-  getPreviousDayItem
+  getPreviousDayItem,
 };

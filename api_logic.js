@@ -1,13 +1,15 @@
-const { getPreviousDayItem } = require("./utils");
+const {
+  increaseDate,
+  getPreviousDayItem,
+  getDateStringFromDateObject,
+} = require("./utils");
 const { Item, List } = require("./mongo");
 const _ = require("lodash");
 
 const getTodaysList = (req, res) => {
-  //find the current date
-  const date = new Date();
-  var month = date.getMonth() + 1;
+  //get the current date
+  const currentDate = getDateStringFromDateObject(new Date());
 
-  const currentDate = date.getDate() + "-" + month + "-" + date.getFullYear();
   let query = req.originalUrl;
   if (query.includes("selected_date")) {
     let selected_date = query.substring("/?selected_date=".length);
@@ -24,10 +26,11 @@ const getTodaysList = (req, res) => {
 };
 
 const addNewItem = (req, res) => {
+  console.log("Adding new Item");
   let itemName = req.body.newItem;
   const listName = req.body.listName;
-  const revisionNeeded = req.body.revision;
-  //console.log(revisionNeeded)
+  const revisionNeeded = Number(req.body.revision || 0);
+  console.log("revisionNeeded:- ", revisionNeeded);
 
   if (itemName.startsWith("https://leetcode.com/problems/")) {
     const startIndex = itemName.indexOf("/problems/") + 10;
@@ -40,12 +43,14 @@ const addNewItem = (req, res) => {
   }
 
   //make a new item
-  var item = new Item({
+  const itemObj = {
     done: false,
     name: itemName,
     timesSeen: 1,
-    gap: revisionNeeded ? 4 : 0,
-  });
+    gap: revisionNeeded,
+  };
+  var item = new Item(itemObj);
+  console.log("new item:- ", itemObj);
 
   const date = new Date();
   var month = date.getMonth() + 1;
@@ -68,6 +73,9 @@ const addNewItem = (req, res) => {
 const markItemAsDone = (req, res) => {
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
+  console.log("mark item as done :- ");
+  console.log("req.query :- ", req.body);
+  let revisionGap = Number(req.body.revisionGap);
   List.findOne(
     {
       name: listName,
@@ -78,22 +86,24 @@ const markItemAsDone = (req, res) => {
           return element.id == checkedItemId;
         });
         element.done = true;
+        element.gap = revisionGap;
         curList.save();
         res.redirect("/" + listName);
 
         //also add it to the revision list in list collection and insert there
-        if (element.gap) {
-          const date = new Date();
-          date.setDate(date.getDate() + element.gap);
-          var month = date.getMonth() + 1;
-          const revDate =
-            date.getDate() + "-" + month + "-" + date.getFullYear();
-          var item = new Item({
+        if (revisionGap > 0) {
+          const _revDate = increaseDate(new Date(), revisionGap);
+          const revDate = getDateStringFromDateObject(_revDate);
+
+          const itemObj = {
             done: false,
             name: element.name,
             timesSeen: element.timesSeen + 1,
-            gap: Math.min(25, element.gap * 2),
-          });
+            gap: Math.min(30, revisionGap * 2),
+          };
+          var item = new Item(itemObj);
+          console.log("adding below item for revision on Date :-", revDate);
+          console.log("revison Item :- ", itemObj);
 
           List.findOne(
             {
@@ -164,8 +174,7 @@ const getCustomList = async (req, res) => {
     } else {
       date = new Date();
     }
-    var month = date.getMonth() + 1;
-    customListName = date.getDate() + "-" + month + "-" + date.getFullYear();
+    customListName = getDateStringFromDateObject(date);
   } else if ("notDoneInput" in req.query) {
     //iterate last N days and from the list of that day , retrieve unfinished item and add it newList
     let numOfDays = req.query["notDoneInput"];
