@@ -36,26 +36,25 @@ const getPreviousDayItem = async (
   let today = new Date();
   let tomorrow = increaseDate(today, 1);
   let startDate = decreaseDate(today, numOfDays);
+  const dateList = [];
+
   while (!isSameDate(startDate, tomorrow)) {
-    let ListName = getDateStringFromDateObject(startDate);
-
-    try {
-      const foundList = await findOneAsync({ name: ListName });
-      if (foundList) {
-        // go over each item and add them to our new list if not done
-        foundList.items
-          .filter((item) => !item.done)
-          .forEach((item) => {
-            newListItems.push(item);
-            itemsListTitle.push(ListName);
-          });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-
+    dateList.push(getDateStringFromDateObject(startDate));
     startDate = increaseDate(startDate, 1);
   }
+  const records = await List.find().where("name").in(dateList).exec();
+  // console.log("records", records);
+  for (let i = 0; i < records.length; i++) {
+    const foundList = records[i];
+    // go over each item and add them to our new list if not done
+    foundList.items
+      .filter((item) => !item.done)
+      .forEach((item) => {
+        newListItems.push(item);
+        itemsListTitle.push(foundList.name);
+      });
+  }
+  // console.log("newListItems", newListItems);
 };
 
 module.exports = {
