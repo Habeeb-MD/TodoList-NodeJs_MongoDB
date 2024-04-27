@@ -68,52 +68,53 @@ function getDate(customListName){
 
 <div class="box">
   <% newListItems.forEach(function(item, index){ %>
+   <div id="listItem__<%=item._id%>">
+    <!-- done button -->
+    <form>
+      <div class="item">
+        <!-- if done then check it ; if not done then onchange submit the form -->
+        <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? 'markItemAsDone(this.form)' : '' %>" <%=item.done ==true ? 'checked' : '' %> id="<%=item._id%>">
+        <label class="form-check-label btn btn-success" for="<%=item._id%>">Done</label>
 
-<!-- done button -->
-    <form action="/done" method="post">
-    <div class="item">
-      <!-- if done then check it ; if not done then onchange submit the form -->
-      <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? "this.form.submit()" : '' %>" <%=item.done ==true ? 'checked' : '' %> id="<%=item._id%>">
-      <label class="form-check-label btn btn-success" for="<%=item._id%>">Done</label>
+    <!-- display short name-->
+        <%
+        var shortName=item.name;
+        var pos = shortName.lastIndexOf("/");
+        if (pos+3 >= shortName.length) {
+          shortName=shortName.slice(0,pos);
+          pos = shortName.lastIndexOf("/");
+        }
+        shortName = shortName.substr(pos+1);
+        %>
 
-<!-- display short name-->
-      <%
-      var shortName=item.name;
-      var pos = shortName.lastIndexOf("/");
-      if (pos+3 >= shortName.length) {
-        shortName=shortName.slice(0,pos);
-        pos = shortName.lastIndexOf("/");
-      }
-      shortName = shortName.substr(pos+1);
-      %>
+        <a href="<%=  item.name  %>" target="_blank">
+          <p><%=  shortName  %>. (<%=  item.timesSeen  %>)</p>
+        </a>
 
-      <a href="<%=  item.name  %>" target="_blank">
-        <p><%=  shortName  %>. (<%=  item.timesSeen  %>)</p>
-      </a>
+        <label class="form-check-label btn btn-warning" for="<%='nextRevisionGap_'+item._id%>">Next Revision ?</label>
+        <input value=<%= item.gap || 0 %> type="number" class="btn btn-secondary col-md-2" name="revisionGap" id="<%='nextRevisionGap_'+item._id%>" min="0" max="30">
 
-      <label class="form-check-label btn btn-warning" for="<%='nextRevisionGap_'+item._id%>">Next Revision ?</label>
-      <input value=<%= item.gap || 0 %> type="number" class="btn btn-secondary col-md-2" name="revisionGap" id="<%='nextRevisionGap_'+item._id%>" min="0" max="30">
+        <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
+        <!-- <p>(<%=  item.timesSeen  %>)</p> -->
+      </div>
+    </form>
 
+    <!-- delete button and delete request form -->
+    <form>
+      <input type="button" class="btn btn-danger" name="button" value="Delete" onclick="deleteItem(this.form)">
+      <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
+      <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
       <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
-      <!-- <p>(<%=  item.timesSeen  %>)</p> -->
-    </div>
-  </form>
+    </form>
 
-  <!-- delete button and delete request form -->
-  <form action="/delete" method="post">
-    <input type="button" class="btn btn-danger" name="button" value="Delete" onclick="this.form.submit()">
-    <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
-    <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
-    <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
-  </form>
-
-  <br>
+    <br>
+  </div> 
   <% });%>
 
 
   
   <!-- add new item form -->
-  <form action="/" method="post">
+  <form action="/items" method="post">
     <input type="text" name="newItem" class="form-control" placeholder="Add New Item" autocomplete="off">
     <%-(listTitle!="todolist" && listTitle!="reminder") ? '<input value=4 type="number" class="col-sm-1" name="revision" id="revision" min="0" max="30"><label class="form-check-label btn btn-warning" for="revision">Revision ?</label>' : '' %>
     <button type="submit" class="btn btn-success" name="listName" value="<%= listTitle %>">Add to List </button>

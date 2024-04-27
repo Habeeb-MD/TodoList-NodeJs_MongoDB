@@ -89,7 +89,7 @@ const markItemAsDone = (req, res) => {
         element.done = true;
         element.gap = revisionGap;
         curList.save();
-        res.redirect("/" + listName);
+        res.status(200).send(null);
 
         //also add it to the revision list in list collection and insert there
         if (revisionGap > 0) {
@@ -135,6 +135,7 @@ const deleteItem = (req, res) => {
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
   const timesSeen = req.body.timesSeen;
+  console.log("deleteItem item", req.body);
 
   //pull is used to delete element from array in mongodb
   List.findOneAndUpdate(
@@ -154,7 +155,7 @@ const deleteItem = (req, res) => {
           foundList.newItem = foundList.newItem - 1;
           foundList.save();
         }
-        res.redirect("/" + listName);
+        res.status(204).send(null);
       }
     }
   );

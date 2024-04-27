@@ -22,17 +22,14 @@ app.use(express.static("public"));
 //handling the get request for root
 app.get("/", getTodaysList);
 
-// handling the post request
-app.post("/", addNewItem);
-
-// if done change done variable to true and add it to revision list
-app.post("/done", markItemAsDone);
-
-//handling the delete request
-app.post("/delete", deleteItem);
-
 //handling the get request for a custom List
 app.get("/:customListName", getCustomList);
+
+app
+  .route("/items")
+  .post(addNewItem) //handling the post request to add new item to list -> this is a synchronous operation
+  .patch(markItemAsDone) // if item is mark as Done -> update done variable to true and add item to revision list
+  .delete(deleteItem); //handling the delete request to delete item from list
 
 let port = process.env.PORT;
 if (port == null || port == "") {
