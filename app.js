@@ -1,7 +1,6 @@
 //jshint esversion:6
 const express = require("express");
 const { establishMongoConnection } = require("./mongo");
-const bodyParser = require("body-parser");
 const app = express();
 const {
   getTodaysList,
@@ -13,15 +12,12 @@ const {
 
 app.set("view engine", "ejs");
 
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-app.use(express.static("public"));
-
 //to connect to mongo server
 establishMongoConnection();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 //handling the get request for root
 app.get("/", getTodaysList);
