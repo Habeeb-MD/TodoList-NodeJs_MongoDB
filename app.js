@@ -17,7 +17,7 @@ app.get("/:customListName", controller.getCustomList);
 
 app
   .route("/items")
-  .post(controller.addNewItem) //post request to add new item to list -> this is a synchronous operation
+  .post(controller.modifyItemName,controller.addNewItem) //post request to add new item to list -> this is a synchronous operation
   .patch(controller.markItemAsDone) // if item is mark as Done -> update done variable to true and add item to revision list
   .delete(controller.deleteItem); //delete request to delete item from list
 

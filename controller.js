@@ -1,8 +1,9 @@
+require("dotenv").config();
 const {
   increaseDate,
   getPreviousDayItem,
   getDateStringFromDateObject,
-  convert_DDMMYYYY_StringTo_YYYYMMDD
+  convert_DDMMYYYY_StringTo_YYYYMMDD,
 } = require("./utils");
 const { Item, List } = require("./mongo");
 const _ = require("lodash");
@@ -32,16 +33,6 @@ const addNewItem = (req, res) => {
   const listName = req.body.listName;
   const revisionNeeded = Number(req.body.revision || 0);
   console.log("revisionNeeded:- ", revisionNeeded);
-
-  if (itemName.startsWith("https://leetcode.com/problems/")) {
-    const startIndex = itemName.indexOf("/problems/") + 10;
-    let endIndex = itemName.indexOf("/", startIndex);
-    if (endIndex < 0) {
-      endIndex = itemName.length;
-    }
-    itemName = itemName.substring(0, endIndex);
-    // console.log(endIndex,itemName);
-  }
 
   //make a new item
   const itemObj = {
@@ -226,10 +217,17 @@ const getCustomList = async (req, res) => {
   );
 };
 
+const modifyItemName = (req, res, next) => {
+  let modifyName = eval(process.env.NAME_MODIFY);
+  req.body.newItem = modifyName(req.body.newItem);
+  next();
+};
+
 module.exports = {
   getTodaysList,
   addNewItem,
   markItemAsDone,
   deleteItem,
   getCustomList,
+  modifyItemName,
 };
