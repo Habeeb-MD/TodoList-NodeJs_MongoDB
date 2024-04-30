@@ -8,6 +8,8 @@ const {
 const { Item, List } = require("./mongo");
 const _ = require("lodash");
 
+const _modifyItemName = eval(process.env.NAME_MODIFY);
+
 const getTodaysList = (req, res) => {
   //get the current date
   const currentDate = getDateStringFromDateObject(new Date());
@@ -218,8 +220,7 @@ const getCustomList = async (req, res) => {
 };
 
 const modifyItemName = (req, res, next) => {
-  let modifyName = eval(process.env.NAME_MODIFY);
-  req.body.newItem = modifyName(req.body.newItem);
+  if (_modifyItemName) req.body.newItem = _modifyItemName(req.body.newItem);
   next();
 };
 
