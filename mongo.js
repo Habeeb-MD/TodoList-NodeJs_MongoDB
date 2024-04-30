@@ -1,7 +1,10 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-connection = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-j09cl.mongodb.net/todolistDB`;
+const connection = process.env.DATABASE.replace(
+  "<DB_USER>",
+  process.env.DB_USER
+).replace("<DB_PASS>", process.env.DB_PASS);
 
 const establishMongoConnection = () => {
   mongoose
