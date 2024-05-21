@@ -22,6 +22,7 @@ const establishMongoConnection = () => {
 
 const itemsSchema = new mongoose.Schema({
   name: String,
+  preferredName: String,
   done: Boolean,
   timesSeen: Number,
   gap: Number,

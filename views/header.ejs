@@ -1,63 +1,131 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSS Stylesheets -->
-    <link rel="stylesheet" href="css/styles.css">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
 
-    <title>To Do List</title>
-  </head>
-  <body class = 'bg-transparent'>
-    <!-- Optional JavaScript; choose one of the two! -->
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <title>To Do List</title>
+</head>
 
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
+<body class='bg-transparent'>
+  <!-- Optional JavaScript; choose one of the two! -->
+
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+
+  <!-- Option 2: Separate Popper and Bootstrap JS -->
+  <!--
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     -->
-  </body>
+</body>
 
-  <script>
-      function formDataToURLSearchParams(FormData){
-        const data = new URLSearchParams();
-        for (const pair of FormData) {
-            data.append(pair[0], pair[1]);
-        }
-        return data;
-      }
-      
-      function markItemAsDone(formElement) {
-        console.log("inside markItemAsDone");
-        const formData = new FormData(formElement);
-
-        fetch('/items', {
-          method: 'PATCH',
-          body: formDataToURLSearchParams(formData),
-        })
-        return false;
+<script>
+  function formDataToURLSearchParams(FormData) {
+    const data = new URLSearchParams();
+    for (const [key, val] of FormData) {
+      data.append(key, val);
     }
-      function deleteItem(formElement) {
-        console.log("inside deleteItem");
-        const formData = new FormData(formElement);
-
-        //delete list item from DOM based on item ID
-        document.getElementById(`listItem__${formData.get("checkbox")}`).remove();
-
-        fetch('/items', {
-          method: 'DELETE',
-          body: formDataToURLSearchParams(formData),
-        })
-        return false;
+    return data;
+  }
+  function ObjectToURLSearchParams(jsObject) {
+    const data = new URLSearchParams();
+    for (const [key, val] of Object.entries(jsObject)) {
+      data.append(key, val);
     }
-    </script> 
-    
+    return data;
+  }
+
+  function markItemAsDone(formElement) {
+    console.log("inside markItemAsDone");
+    let formData = new FormData(formElement);
+    formData = formDataToURLSearchParams(formData);
+    formData.append("type", "markItemAsDone");
+    if (formData.get('checkbox') == "on") {
+      fetch('/items', {
+        method: 'PATCH',
+        body: formData,
+      })
+    }
+    return false;
+  }
+  function deleteItem(formElement) {
+    console.log("inside deleteItem");
+    const formData = new FormData(formElement);
+
+    //delete list item from DOM based on item ID
+    document.getElementById(`listItem__${formData.get("checkbox")}`).remove();
+
+    fetch('/items', {
+      method: 'DELETE',
+      body: formDataToURLSearchParams(formData),
+    })
+    return false;
+  }
+
+  function changeName(id, newName, listName) {
+    //for sending API request to backend to change item Name
+
+    // console.log("inside changeName");
+    const reqBody = {
+      type: "updateName",
+      id, newName, listName
+    }
+    // console.log(reqBody);
+    fetch('/items', {
+      method: 'PATCH',
+      body: ObjectToURLSearchParams(reqBody),
+    })
+  }
+  function handleNameChange(formElement) {
+    // console.log("inside handleNameChange");
+    const formData = new FormData(formElement);
+    // console.log(formData);
+    const id = formData.get('id');
+    const edit_btn = document.getElementById(`edit_btn_${id}`);
+    // console.log(id, edit_btn);
+    if (edit_btn.innerText == "Edit") {
+      const name_anchor = document.getElementById(`item_name_${id}`);
+      // console.log(name_anchor.id);
+
+      const new_text_input = document.createElement("input");
+      new_text_input.type = "text";
+      new_text_input.value = formData.get("href");
+      new_text_input.id = `new_name_input_${id}`
+      // console.log(new_text_input);
+
+      edit_btn.innerText = "Save";
+      name_anchor.replaceWith(new_text_input);
+    }
+    else {
+      const name_input = document.getElementById(`new_name_input_${id}`);
+      const newName = name_input.value;
+      // console.log("newName :-", newName);
+      changeName(id, newName, formData.get("listName"));
+
+      const item_name_anchor = document.createElement("a");
+      item_name_anchor.id = `item_name_${id}`;
+      item_name_anchor.href = formData.get('href');
+      item_name_anchor.target = '_blank';
+      item_name_anchor.innerHTML = `<p>${newName}</p>`
+      // console.log(item_name_anchor.outerHTML);
+
+      edit_btn.innerText = "Edit";
+      name_input.replaceWith(item_name_anchor);
+    }
+    return false;
+  }    
+</script>
+
 </html>

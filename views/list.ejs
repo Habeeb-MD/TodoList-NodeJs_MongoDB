@@ -1,125 +1,140 @@
-<%
-function getDate(customListName){
-    customListName = customListName.split("-")
-    if(customListName[0]<10)customListName[0]='0'+customListName[0];
-    if(customListName[1]<10)customListName[1]='0'+customListName[1];
-    customListName=customListName.reverse().join("-");
-    return customListName
-}
-%>
+<% function getDate(customListName){ customListName=customListName.split("-")
+  if(customListName[0]<10)customListName[0]='0' +customListName[0]; if(customListName[1]<10)customListName[1]='0'
+  +customListName[1]; customListName=customListName.reverse().join("-"); return customListName } %>
 
 
-<%- include("header") -%>
+  <%- include("header") -%>
 
-<!-- clock -->
-<iframe src="https://free.timeanddate.com/clock/i87gw796/n539/fn5/fs12/fc009/tct/pct/pa8/tt0/tw1/th1/ta1/tb4" frameborder="0" width="120" height="44" allowtransparency="true"></iframe>
+    <!-- clock -->
+    <iframe src="https://free.timeanddate.com/clock/i87gw796/n539/fn5/fs12/fc009/tct/pct/pa8/tt0/tw1/th1/ta1/tb4"
+      frameborder="0" width="120" height="44" allowtransparency="true"></iframe>
 
 
 
 
-<div class="btn-group btn-group-sm left_align" role="group" aria-label="Basic mixed styles example">
-  <!-- prevDate button -->
-  <form action="<%= "prevDate"+listTitle %>" method="get">
-    <button type="button" class="btn btn-danger" onclick="this.form.submit()">Previous Date</button>
-  </form>
+    <div class="btn-group btn-group-sm left_align" role="group" aria-label="Basic mixed styles example">
+      <!-- prevDate button -->
+      <form action="<%= " prevDate"+listTitle %>" method="get">
+        <button type="button" class="btn btn-danger" onclick="this.form.submit()">Previous Date</button>
+      </form>
 
-  <!-- currentDate button -->
-  <form action="/" method="get">
-    <button type="button" class="btn btn-warning" onclick="this.form.submit()">Current Date</button>
-  </form>
+      <!-- currentDate button -->
+      <form action="/" method="get">
+        <button type="button" class="btn btn-warning" onclick="this.form.submit()">Current Date</button>
+      </form>
 
-  <!-- nextDay button -->
-  <form action="<%= "nextDate"+listTitle %>" method="get">
-      <button type="button" class="btn btn-success" onclick="this.form.submit()">Next Date</button>
-  </form>
+      <!-- nextDay button -->
+      <form action="<%= " nextDate"+listTitle %>" method="get">
+        <button type="button" class="btn btn-success" onclick="this.form.submit()">Next Date</button>
+      </form>
 
-  <!-- getNotDoneForm -->
-  <form id="getNotDoneForm" method="GET">
-    <input type="number" class="col-md-2" id="notDoneInput" name="notDoneInput" min="1" max="200" required>
-    <button type="button" class="btn btn-success" onclick="this.form.submit()">Get Not Done</button>
-  </form>  
-  
-</div>  
+      <!-- getNotDoneForm -->
+      <form id="getNotDoneForm" method="GET">
+        <input type="number" class="col-md-2" id="notDoneInput" name="notDoneInput" min="1" max="200" required>
+        <button type="button" class="btn btn-success" onclick="this.form.submit()">Get Not Done</button>
+      </form>
 
-<div class="btn-group btn-group-sm right_align" role="group" aria-label="Basic mixed styles example">
+    </div>
 
-  <form action="/" method="get">
-    <input type="date" class="btn btn-danger" id="date" name="selected_date" value=<%= getDate(listTitle) %> min="2021-05-13">
-    <button type="button" class="btn btn-danger" onclick="this.form.submit()" >Go to Date</label>
-  </form>
-  
-  <!-- reminder button  -->
-  <form action="/reminder" method="get">
-    <button type="button" class="btn btn-warning" onclick="this.form.submit()">Reminder</button>
-  </form>
+    <div class="btn-group btn-group-sm right_align" role="group" aria-label="Basic mixed styles example">
 
-  <!-- ToDOList button -->
-  <form action="/todolist" method="get">
-    <button type="button" class="btn btn-success" onclick="this.form.submit()">ToDOList</button>
-  </form>
-</div>  
+      <form action="/" method="get">
+        <input type="date" class="btn btn-danger" id="date" name="selected_date" value=<%=getDate(listTitle) %>
+        min="2021-05-13">
+        <button type="button" class="btn btn-danger" onclick="this.form.submit()">Go to Date</label>
+      </form>
 
+      <!-- reminder button  -->
+      <form action="/reminder" method="get">
+        <button type="button" class="btn btn-warning" onclick="this.form.submit()">Reminder</button>
+      </form>
 
-<!-- heading -->
-<div class="box" id="heading">
-  <h1> <%= listTitle %> </h1>
-  <p>(<%=  newItem  %>+<%=  newListItems.length- newItem  %>)</p>
-</div>
-
-<div class="box">
-  <% newListItems.forEach(function(item, index){ %>
-   <div id="listItem__<%=item._id%>">
-    <!-- done button -->
-    <form>
-      <div class="item">
-        <!-- if done then check it ; if not done then onchange submit the form -->
-        <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="<%=item.done==false ? 'markItemAsDone(this.form)' : '' %>" <%=item.done ==true ? 'checked' : '' %> id="<%=item._id%>">
-        <label class="form-check-label btn btn-success" for="<%=item._id%>">Done</label>
-
-    <!-- display short name-->
-        <%
-        var shortName=item.name;
-        var pos = shortName.lastIndexOf("/");
-        if (pos+3 >= shortName.length) {
-          shortName=shortName.slice(0,pos);
-          pos = shortName.lastIndexOf("/");
-        }
-        shortName = shortName.substr(pos+1);
-        %>
-
-        <a href="<%=  item.name  %>" target="_blank">
-          <p><%=  shortName  %>. (<%=  item.timesSeen  %>)</p>
-        </a>
-
-        <label class="form-check-label btn btn-warning" for="<%='nextRevisionGap_'+item._id%>">Next Revision ?</label>
-        <input value=<%= item.gap || 0 %> type="number" class="btn btn-secondary col-md-2" name="revisionGap" id="<%='nextRevisionGap_'+item._id%>" min="0" max="30">
-
-        <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
-        <!-- <p>(<%=  item.timesSeen  %>)</p> -->
-      </div>
-    </form>
-
-    <!-- delete button and delete request form -->
-    <form>
-      <input type="button" class="btn btn-danger" name="button" value="Delete" onclick="deleteItem(this.form)">
-      <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
-      <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
-      <input type="hidden" name="listName" value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
-    </form>
-
-    <br>
-  </div> 
-  <% });%>
+      <!-- ToDOList button -->
+      <form action="/todolist" method="get">
+        <button type="button" class="btn btn-success" onclick="this.form.submit()">ToDOList</button>
+      </form>
+    </div>
 
 
-  
-  <!-- add new item form -->
-  <form action="/items" method="post">
-    <input type="text" name="newItem" class="form-control" placeholder="Add New Item" autocomplete="off">
-    <%-(listTitle!="todolist" && listTitle!="reminder") ? '<input value=4 type="number" class="col-sm-1" name="revision" id="revision" min="0" max="30"><label class="form-check-label btn btn-warning" for="revision">Revision ?</label>' : '' %>
-    <button type="submit" class="btn btn-success" name="listName" value="<%= listTitle %>">Add to List </button>
-  </form>  
+    <!-- heading -->
+    <div class="box" id="heading">
+      <h1>
+        <%= listTitle %>
+      </h1>
+      <p>(<%= newItem %>+<%= newListItems.length- newItem %>)</p>
+    </div>
 
-</div>
+    <div class="box">
+      <% newListItems.forEach(function(item, index){ %>
+        <div id="listItem__<%=item._id%>">
+          <!-- done button -->
+          <form>
+            <div class="item">
+              <input type="hidden" name="id" value="<%=item._id%>">
+              <input type="hidden" name="href" value="<%=item.name%>">
 
-<%- include("footer") -%>
+              <!-- if done then check it ; if not done then onchange submit the form -->
+              <input type="checkbox" name="checkbox" id="<%=item._id%>"
+                onChange="<%=item.done==false ? 'markItemAsDone(this.form)' : '' %>" <%=item.done==true ? 'checked' : ''
+                %>>
+              <label class="form-check-label btn btn-success" for="<%=item._id%>">Done</label>
+
+              <!-- display short name-->
+              <% let itemName=item.preferredName; if(!itemName){ itemName=item.name; let pos=itemName.lastIndexOf("/");
+                if (pos+3>=
+                itemName.length) {
+                itemName=itemName.slice(0,pos);
+                pos = itemName.lastIndexOf("/");
+                }
+                itemName = itemName.substr(pos+1);
+                }
+                %>
+
+                <a id="<%='item_name_'+item._id%>" href="<%=  item.name  %>" target="_blank">
+                  <p>
+                    <%= itemName %>.
+                  </p>
+                </a>
+                <p>
+                  (<%= item.timesSeen %>)
+                </p>
+                <button type="button" id="<%='edit_btn_'+item._id%>" onclick="handleNameChange(this.form)">Edit</button>
+
+                <label class="form-check-label btn btn-warning" for="<%='nextRevisionGap_'+item._id%>">Next Revision
+                  ?</label>
+                <input value=<%=item.gap || 0 %> type="number" class="btn btn-secondary col-md-2" name="revisionGap"
+                id="<%='nextRevisionGap_'+item._id%>" min="0" max="30">
+
+                  <input type="hidden" name="listName"
+                    value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
+                  <!-- <p>(<%=  item.timesSeen  %>)</p> -->
+            </div>
+          </form>
+
+          <!-- delete button and delete request form -->
+          <form>
+            <input type="button" class="btn btn-danger" name="button" value="Delete" onclick="deleteItem(this.form)">
+            <input type="hidden" name="checkbox" value="<%=item._id%>"></input>
+            <input type="hidden" name="timesSeen" value="<%=item.timesSeen%>"></input>
+            <input type="hidden" name="listName"
+              value="<%= (typeof itemsListTitle != 'undefined' ? itemsListTitle[index] : listTitle) %>"></input>
+          </form>
+
+          <br>
+        </div>
+        <% });%>
+
+
+          <!-- add new item form -->
+          <form action="/items" method="post">
+            <input type="text" name="newItem" class="form-control" placeholder="Add New Item" autocomplete="off">
+            <%-(listTitle!="todolist" && listTitle!="reminder" )
+              ? '<input value=4 type="number" class="col-sm-1" name="revision" id="revision" min="0" max="30"><label class="form-check-label btn btn-warning" for="revision">Revision ?</label>'
+              : '' %>
+              <button type="submit" class="btn btn-success" name="listName" value="<%= listTitle %>">Add to List
+              </button>
+          </form>
+
+    </div>
+
+    <%- include("footer") -%>

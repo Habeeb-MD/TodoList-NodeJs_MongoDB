@@ -4,12 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "14.16.1"
+    "node": "18.13.0"
   },
   "dependencies": {
     "dotenv": "^9.0.2",
@@ -19,6 +20,7 @@
     "mongoose": "^5.9.20"
   },
   "devDependencies": {
+    "morgan": "^1.10.0",
     "nodemon": "^3.0.1"
   }
 }

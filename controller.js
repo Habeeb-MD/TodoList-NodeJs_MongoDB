@@ -63,12 +63,10 @@ const addNewItem = (req, res) => {
     }
   );
 };
-
 const markItemAsDone = (req, res) => {
-  const checkedItemId = req.body.checkbox;
+  // if item is mark as Done -> update done variable to true and add item to revision list
+  const checkedItemId = req.body.id;
   const listName = req.body.listName;
-  console.log("mark item as done :- ");
-  console.log("req.query :- ", req.body);
   let revisionGap = Number(req.body.revisionGap);
   List.findOne(
     {
@@ -122,6 +120,37 @@ const markItemAsDone = (req, res) => {
       }
     }
   );
+};
+
+const updateItemName = (req, res) => {
+  const itemId = req.body.id;
+  const listName = req.body.listName;
+  const newName = req.body.newName;
+  List.findOne(
+    {
+      name: listName,
+    },
+    function (err, curList) {
+      if (!err) {
+        var element = curList.items.find(function (element) {
+          return element.id == itemId;
+        });
+        element.preferredName = newName;
+        curList.save();
+        res.status(200).send(null);
+      }
+    }
+  );
+};
+
+const updateListItem = (req, res) => {
+  console.log("mark item as done :- ");
+  console.log("req.query :- ", req.body);
+  const updateType = req.body.type;
+  if (updateType == "markItemAsDone") return markItemAsDone(req, res);
+  if (updateType == "updateName") return updateItemName(req, res);
+  res.status(400).send(null);
+  return;
 };
 
 const deleteItem = (req, res) => {
@@ -227,6 +256,7 @@ const modifyItemName = (req, res, next) => {
 module.exports = {
   getTodaysList,
   addNewItem,
+  updateListItem,
   markItemAsDone,
   deleteItem,
   getCustomList,
