@@ -10,6 +10,13 @@ const _ = require("lodash");
 
 const _modifyItemName = eval(process.env.NAME_MODIFY);
 
+// Piotr Wozniak’s system
+//     1st repetition: 1 day after initial learning
+//     2nd: 7 days after initial learning
+//     3rd: 16 days after initial learning
+//     4th: 35 days after initial learning
+const timesSeenToNextRevision = [1, 7, 15, 35];
+
 const getTodaysList = (req, res) => {
   //get the current date
   const currentDate = getDateStringFromDateObject(new Date());
@@ -84,14 +91,15 @@ const markItemAsDone = (req, res) => {
 
         //also add it to the revision list in list collection and insert there
         if (revisionGap > 0) {
-          const _revDate = increaseDate(new Date(), revisionGap);
+          const _revisionGap = element.timesSeen <= timesSeenToNextRevision.length ? timesSeenToNextRevision[element.timesSeen - 1] : timesSeenToNextRevision[timesSeenToNextRevision.length - 1];
+          const _revDate = increaseDate(new Date(), _revisionGap);
           const revDate = getDateStringFromDateObject(_revDate);
 
           const itemObj = {
             done: false,
             name: element.name,
             timesSeen: element.timesSeen + 1,
-            gap: Math.min(30, revisionGap * 2),
+            gap: _revisionGap,
           };
           var item = new Item(itemObj);
           console.log("adding below item for revision on Date :-", revDate);

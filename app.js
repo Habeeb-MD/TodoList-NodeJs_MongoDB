@@ -9,6 +9,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+//adding middleware for logging 
+app.use((req, res, next) => {
+  console.log("NEW QUERY :- " + req.method + ": " + req.path);
+  next();
+});
+
 //handling the get request for root
 app.get("/", controller.getTodaysList);
 

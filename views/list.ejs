@@ -129,7 +129,7 @@
           <form action="/items" method="post">
             <input type="text" name="newItem" class="form-control" placeholder="Add New Item" autocomplete="off">
             <%-(listTitle!="todolist" && listTitle!="reminder" )
-              ? '<input value=4 type="number" class="col-sm-1" name="revision" id="revision" min="0" max="30"><label class="form-check-label btn btn-warning" for="revision">Revision ?</label>'
+              ? '<input value=1 type="number" class="col-sm-1" name="revision" id="revision" min="0" max="30"><label class="form-check-label btn btn-warning" for="revision">Revision ?</label>'
               : '' %>
               <button type="submit" class="btn btn-success" name="listName" value="<%= listTitle %>">Add to List
               </button>
